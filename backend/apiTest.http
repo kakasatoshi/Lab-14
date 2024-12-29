@@ -1,0 +1,23 @@
+# GET http://localhost:5000/shop/
+
+# POST http://localhost:5000/shop/postCart
+# Content-Type: application/json
+
+# {
+#     "productId": "676eb47a5cfa113abfe171d1"
+# }
+
+# GET http://localhost:5000/shop/products
+
+
+#  POST http://localhost:5000/shop/postCart
+#         Content-Type: application/json
+
+#  { "productId": "676d11dda85fb3efc1f81598"}
+
+# GET http://localhost:5000/shop/cart 
+
+
+# POST http://localhost:5000/shop/createOrder 
+
+GET http://localhost:5000/shop/orders

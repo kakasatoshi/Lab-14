@@ -1,0 +1,23 @@
+[
+    {
+        "id": "123245",
+        "title": "A Book",
+        "imageUrl": "https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg",
+        "description": "This is an awesome book!",
+        "price": 19
+    },
+    {
+        "id": "0.6834318455605393",
+        "title": "Bài học mở đầu ",
+        "imageUrl": "https://philconnect.edu.vn/wp-content/uploads/2018/02/BOOK.jpg",
+        "description": "12345",
+        "price": 1230
+    },
+    {
+        "id": "0.7588073112092706",
+        "title": "Đắt Nhan",
+        "imageUrl": "sdsd",
+        "description": "ddd",
+        "price": 5455
+    }
+]
