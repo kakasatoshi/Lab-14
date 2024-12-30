@@ -1,105 +1,103 @@
-const Product = require('../models/product');
+const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
-  res.status(200).json({
-    message: 'Add Product page data',
-    pageTitle: 'Add Product',
-    path: '/admin/add-product',
-    editing: false
+  res.json({
+    message: "Add Product Page",
+    pageTitle: "Add Product",
+    path: "/admin/add-product",
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
+  const { title, imageUrl, price, description } = req.body;
   const product = new Product({
-    title: title,
-    price: price,
-    description: description,
-    imageUrl: imageUrl,
-    userId: req.user
+    title,
+    price,
+    description,
+    imageUrl,
+    userId: req.user,
   });
+
   product
     .save()
-    .then(result => {
+    .then((result) => {
+      console.log("Created Product");
       res.status(201).json({
-        message: 'Product created successfully!',
-        product: result
+        message: "Product created successfully",
+        product: result,
       });
     })
-    .catch(err => {
-      res.status(500).json({
-        message: 'Creating a product failed.',
-        error: err
-      });
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Creating product failed" });
     });
 };
 
 exports.getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;
-  if (!editMode) {
-    return res.status(400).json({ message: 'Edit mode not provided.' });
-  }
   const prodId = req.params.productId;
+
   Product.findById(prodId)
-    .then(product => {
+    .then((product) => {
       if (!product) {
-        return res.status(404).json({ message: 'Product not found.' });
+        return res.status(404).json({ message: "Product not found" });
       }
-      res.status(200).json({
-        message: 'Edit Product page data',
-        product: product,
-        editing: editMode
-      });
+      res.json({ product });
     })
-    .catch(err => res.status(500).json({ message: 'Fetching product failed.', error: err }));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Fetching product failed" });
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
+  const { productId, title, price, imageUrl, description } = req.body;
 
-  Product.findById(prodId)
-    .then(product => {
+  Product.findById(productId)
+    .then((product) => {
       if (!product) {
-        return res.status(404).json({ message: 'Product not found.' });
+        return res.status(404).json({ message: "Product not found" });
       }
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.description = updatedDesc;
-      product.imageUrl = updatedImageUrl;
+      product.title = title;
+      product.price = price;
+      product.imageUrl = imageUrl;
+      product.description = description;
+
       return product.save();
     })
-    .then(result => {
-      res.status(200).json({
-        message: 'Product updated successfully!',
-        product: result
+    .then((result) => {
+      console.log("UPDATED PRODUCT!");
+      res.json({
+        message: "Product updated successfully",
+        product: result,
       });
     })
-    .catch(err => res.status(500).json({ message: 'Updating product failed.', error: err }));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Updating product failed" });
+    });
 };
 
 exports.getProducts = (req, res, next) => {
   Product.find()
-    .then(products => {
-      res.status(200).json({
-        message: 'Fetched products successfully.',
-        products: products
-      });
+    .then((products) => {
+      res.json({ products });
     })
-    .catch(err => res.status(500).json({ message: 'Fetching products failed.', error: err }));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Fetching products failed" });
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
+
   Product.findByIdAndRemove(prodId)
     .then(() => {
-      res.status(200).json({ message: 'Product deleted successfully.' });
+      console.log("DESTROYED PRODUCT");
+      res.json({ message: "Product deleted successfully" });
     })
-    .catch(err => res.status(500).json({ message: 'Deleting product failed.', error: err }));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Deleting product failed" });
+    });
 };
