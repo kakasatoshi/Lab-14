@@ -1,18 +1,18 @@
-const Product = require("../models/product");
-// const
+const Product = require('../models/product');
+const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
-    .then((products) => {
+  Product.find()
+    .then(products => {
       res.status(200).json({
-        message: "Fetched all products successfully",
-        products: products,
+        message: 'Fetched products successfully.',
+        products: products
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Fetching products failed",
-        error: err,
+        message: 'Fetching products failed.',
+        error: err
       });
     });
 };
@@ -20,81 +20,74 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
-    .then((product) => {
+    .then(product => {
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res.status(404).json({ message: 'Product not found.' });
       }
       res.status(200).json({
-        message: "Product fetched successfully",
-        product: product,
+        message: 'Fetched product successfully.',
+        product: product
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Fetching product failed",
-        error: err,
+        message: 'Fetching product failed.',
+        error: err
       });
     });
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll()
-    .then((products) => {
+  Product.find()
+    .then(products => {
       res.status(200).json({
-        message: "Shop index fetched successfully",
-        products: products,
+        message: 'Fetched products successfully for index page.',
+        products: products
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Fetching index failed",
-        error: err,
+        message: 'Fetching products failed for index page.',
+        error: err
       });
     });
 };
 
 exports.getCart = (req, res, next) => {
   req.user
-    .getCart()
-    .then((products) => {
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const products = user.cart.items;
       res.status(200).json({
-        message: "Cart fetched successfully",
-        cart: products,
+        message: 'Fetched cart successfully.',
+        cart: products
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Fetching cart failed",
-        error: err,
+        message: 'Fetching cart failed.',
+        error: err
       });
     });
 };
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  console.log(
-    prodId,
-    "\n -------------------------------Post Cart-------------------------------\n"
-  );
   Product.findById(prodId)
-    .then((product) => {
-      console.log(
-        req.user.addToCart(product),
-        "-----------------req.user.addToCart(product)---------------"
-      );
+    .then(product => {
       return req.user.addToCart(product);
     })
-    .then((result) => {
-      console.log(result);
+    .then(result => {
       res.status(200).json({
-        message: "Product added to cart",
-        cart: result,
+        message: 'Added product to cart successfully.',
+        cart: result
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Adding to cart failed",
-        error: err,
+        message: 'Adding product to cart failed.',
+        error: err
       });
     });
 };
@@ -102,80 +95,40 @@ exports.postCart = (req, res, next) => {
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
-    .deleteItemFromCart(prodId)
-    .then((result) => {
+    .removeFromCart(prodId)
+    .then(result => {
       res.status(200).json({
-        message: "Product removed from cart",
-        cart: result,
+        message: 'Removed product from cart successfully.',
+        cart: result
       });
     })
-    .catch((err) => {
+    .catch(err => {
       res.status(500).json({
-        message: "Removing from cart failed",
-        error: err,
+        message: 'Removing product from cart failed.',
+        error: err
       });
     });
 };
 
 exports.postOrder = (req, res, next) => {
-  console.log(
-    "POST Order",
-    req.user,
-    "--------------------------------",
-    req.user.getCart()
-  );
-  let fetchedCart;
   req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart;
-      console.log("Cart", fetchedCart);
-      // const products = cart.getProducts();
-      console.log("Cart.Products");
-      return cart;
-    })
-    .then((products) => {
-      console.log("Products", products);
-      return req.user.addOrder().then((order) => {
-        console.log("Order", order);
-        return order.addProducts(
-          products.map((product) => {
-            console.log("Product", product);
-            product.orderItem = { quantity: product.quantity };
-            return product;
-          })
-        );
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const products = user.cart.items.map(i => {
+        return { quantity: i.quantity, product: { ...i.productId._doc } };
       });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user
+        },
+        products: products
+      });
+      return order.save();
+    })
+    .then(result => {
+      return req.user.clearCart();
     })
     .then(() => {
-      return fetchedCart.setProducts(null);
-    })
-    .then(() => {
-      res.status(200).json({
-        message: "Order placed successfully",
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "Placing order failed",
-        error: err,
-      });
-    });
-};
-
-exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders({ include: ["products"] })
-    .then((orders) => {
-      res.status(200).json({
-        message: "Orders fetched successfully",
-        orders: orders,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "Fetching orders failed",
-        error: err,
-      });
-    });
-};
+      res.status
