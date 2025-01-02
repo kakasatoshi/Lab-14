@@ -20,7 +20,7 @@ app.use(cors());
 
 // Thêm user vào request để có thể truy cập trong controller
 app.use((req, res, next) => {
-  User.findById("5bab316ce0a7c75f783cb8a8")
+  User.findById("676eb3be829015002764f5b5")
     .then((user) => {
       req.user = user;
       next();
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 // Kết nối MongoDB và khởi chạy server
 mongoose
   .connect(
-    "mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/shop?retryWrites=true"
+    "mongodb+srv://kakasatoshi:Mnbv%400987@product.6wlp4.mongodb.net/Product?retryWrites=true&w=majority&appName=Product"
   )
   .then((result) => {
     User.findOne().then((user) => {

@@ -36,7 +36,7 @@ const AddToCart = ({ id }) => {
   return (
     <form onSubmit={handleSubmit}>
       <button className="btn" type="submit">
-        Add to Cart
+         Add to Cart
       </button>
       {/* <input type="hidden" name="productId" value={id} /> */}
     </form>

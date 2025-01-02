@@ -45,7 +45,7 @@ const ProductList = () => {
       console.error("Error submitting form", error);
     }
     navigate("/admin/ProductList");
-    // window.location.reload();
+    window.location.reload();
   };
 
   const editProductHandler = (product) => {
