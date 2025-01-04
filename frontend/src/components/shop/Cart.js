@@ -12,7 +12,7 @@ const Cart = () => {
 
   const applyData = (data) => {
     console.log(data);
-    setCarts(data.cart);
+    setCarts(data.products);
     // console.log(data); // Hoặc cập nhật state hoặc render dữ liệu vào giao diện
   };
 

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import useHttp from "../../http/useHttp";
+import '../../css/addtocart.css';
+
 
 const AddToCart = ({ id }) => {
   // console.log("Product ID:", id);
@@ -34,9 +36,9 @@ const AddToCart = ({ id }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <button className="btn" type="submit">
-         Add to Cart
+    <form onSubmit={handleSubmit} className="form">
+      <button className="btn-addtocart btn" type="submit">
+        Add to Cart
       </button>
       {/* <input type="hidden" name="productId" value={id} /> */}
     </form>

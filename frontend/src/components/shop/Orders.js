@@ -29,7 +29,7 @@ const Orders = () => {
               <li key={order.id}>
                 <h1># {order._id}</h1>
                 <ul>
-                  {order.items.map((product, index) => (
+                  {order.products.map((product, index) => (
                     <li key={index}>
                       {product.title} ({product.quantity})
                     </li>

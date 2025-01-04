@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddToCart from "../includes/AddToCart"; // Separate AddToCart component
 import "../../css/product.css";
+import "../../css/cart.css";
 import useHttp from "../../http/useHttp";
 const Index = () => {
   const { isLoading, error, sendRequest } = useHttp();
